@@ -13,14 +13,11 @@ import java.util.Objects;
 @Service
 public class SalaryCalculator {
 
-    private static final BigDecimal MINIMUM_PROJECT_COMPLETION =
-            new BigDecimal("60");
+    private static final BigDecimal MINIMUM_PROJECT_COMPLETION = new BigDecimal("60");
 
-    private static final BigDecimal YEARLY_INCREMENT_PERCENTAGE =
-            new BigDecimal("2");
+    private static final BigDecimal YEARLY_INCREMENT_PERCENTAGE = new BigDecimal("2");
 
-    private static final BigDecimal ONE_HUNDRED =
-            new BigDecimal("100");
+    private static final BigDecimal ONE_HUNDRED = new BigDecimal("100");
 
     private static final int MONEY_SCALE = 2;
 
@@ -30,24 +27,18 @@ public class SalaryCalculator {
             LocalDate processingDate) {
 
         Objects.requireNonNull(employee, "Employee cannot be null");
-        Objects.requireNonNull(processingDate,
-                "Processing date cannot be null");
+        Objects.requireNonNull(processingDate, "Processing date cannot be null");
 
         if (processingDate.isBefore(employee.getJoinedDate())) {
-            throw new IllegalArgumentException(
-                    "Processing date cannot be before the joining date");
+            throw new IllegalArgumentException("Processing date cannot be before the joining date");
         }
 
         // Count only fully completed years of service.
-        int completedYears = Period.between(
-                employee.getJoinedDate(),
-                processingDate
-        ).getYears();
+        int completedYears = Period.between(employee.getJoinedDate(), processingDate).getYears();
 
         // Employees below 60% project completion receive no increase.
-        boolean eligibleForIncrease =
-                employee.getCompletedProjectsPercentage()
-                        .compareTo(MINIMUM_PROJECT_COMPLETION) >= 0;
+        boolean eligibleForIncrease = employee.getCompletedProjectsPercentage()
+                .compareTo(MINIMUM_PROJECT_COMPLETION) >= 0;
 
         BigDecimal incrementPercentage = BigDecimal.ZERO;
         BigDecimal incrementAmount = BigDecimal.ZERO;

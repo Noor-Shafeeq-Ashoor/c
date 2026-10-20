@@ -18,11 +18,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Coordinates concurrent processing of employee salary records.
- *
- * ExecutorService manages the worker threads.
- * Semaphore limits simultaneous processing tasks.
- * ReentrantLock protects the shared results list.
- * AtomicInteger tracks the number of completed tasks safely.
+ * 1- ExecutorService: manages the worker threads.
+ * 2- Semaphore: limits simultaneous processing tasks.
+ * 3- ReentrantLock: protects the shared results list.
+ * 4- AtomicInteger: tracks the number of completed tasks safely.
  */
 @Service
 public class ProcessingCoordinator {
@@ -33,9 +32,7 @@ public class ProcessingCoordinator {
     /**
      * Creates a coordinator with the requested concurrency limits.
      */
-    public ProcessingCoordinator(
-            int numberOfThreads,
-            int maxConcurrentTasks) {
+    public ProcessingCoordinator(int numberOfThreads, int maxConcurrentTasks) {
 
         if (numberOfThreads <= 0 || maxConcurrentTasks <= 0) {
             throw new IllegalArgumentException(
@@ -74,8 +71,7 @@ public class ProcessingCoordinator {
         // Stores task handles so we can wait for every submitted task.
         List<Future<?>> futures = new ArrayList<>();
 
-        ExecutorService executor =
-                Executors.newFixedThreadPool(numberOfThreads);
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
 
         try {
             for (Employee employee : employees) {
@@ -89,8 +85,7 @@ public class ProcessingCoordinator {
                         permitAcquired = true;
 
                         // Calculate this employee's salary result.
-                        EmployeeProcessingResult result =
-                                processingService.processEmployee(employee);
+                        EmployeeProcessingResult result = processingService.processEmployee(employee);
 
                         // Protect the shared list while adding the result.
                         resultsLock.lock();
@@ -138,7 +133,6 @@ public class ProcessingCoordinator {
             throw exception;
 
         } finally {
-            // Shut down the pool even if a task fails.
             executor.shutdownNow();
         }
     }
