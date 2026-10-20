@@ -5,6 +5,7 @@ import com.ga.csv.model.EmployeeRole;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Component
 public class CsvEmployeeReader {
 
     private static final String NAME_COLUMN = "name";
@@ -62,6 +64,7 @@ public class CsvEmployeeReader {
     private void validateHeaders(CSVParser parser) throws IOException {
 
         List<String> requiredHeaders = List.of(
+                "id",
                 NAME_COLUMN,
                 SALARY_COLUMN,
                 JOINED_DATE_COLUMN,
@@ -78,23 +81,37 @@ public class CsvEmployeeReader {
     }
 
 
+
+    /**
+     * Converts one CSV record into an Employee object.
+     *
+     * The input CSV contains six columns:
+     * id, name, salary, joinedDate, role, completedProjectsPercentage.
+     *
+     * @param record the CSV record to parse
+     * @return the employee represented by the record
+     */
     private Employee parseEmployee(CSVRecord record) {
 
-        String name = record.get(NAME_COLUMN).trim();
+        String name = record.get("name").trim();
 
         BigDecimal salary = new BigDecimal(
-                record.get(SALARY_COLUMN).trim());
+                record.get("salary").trim());
 
         LocalDate joinedDate = LocalDate.parse(
-                record.get(JOINED_DATE_COLUMN).trim());
+                record.get("joinedDate").trim());
 
         EmployeeRole role = EmployeeRole.valueOf(
-                record.get(ROLE_COLUMN)
-                        .trim()
-                        .toUpperCase(Locale.ROOT));
+                record.get("role").trim().toUpperCase(Locale.ROOT));
 
         BigDecimal percentage = new BigDecimal(
-                record.get(COMPLETED_PROJECTS_COLUMN).trim());
+                record.get("completedProjectsPercentage").trim());
+
+        // Convert decimal ratios such as 0.8 into percentages such as 80.
+        if (percentage.compareTo(BigDecimal.ONE) <= 0
+                && percentage.compareTo(BigDecimal.ZERO) >= 0) {
+            percentage = percentage.multiply(new BigDecimal("100"));
+        }
 
         if (percentage.compareTo(BigDecimal.ZERO) < 0
                 || percentage.compareTo(new BigDecimal("100")) > 0) {
@@ -109,4 +126,5 @@ public class CsvEmployeeReader {
                 role,
                 percentage);
     }
+
 }
