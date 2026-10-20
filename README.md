@@ -220,17 +220,6 @@ The thread pool size and maximum number of concurrent tasks are separate setting
 - Maven support.
 - The input CSV file.
 
-### Run Using IntelliJ IDEA
-
-1. Clone or download the project.
-2. Open the project in IntelliJ IDEA.
-3. Allow Maven to import and resolve dependencies.
-4. Verify the configuration in `application.properties`.
-5. Place `employees.csv` in the configured input location.
-6. Open `CsvApplication.java`.
-7. Run the `main()` method.
-8. Check the console for processing messages.
-9. Locate the generated `employee_salary_results.csv` file at the configured output path.
 
 ### Build the Project
 
